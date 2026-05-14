@@ -9,15 +9,19 @@ import { Button } from '@/components/ui/Button';
 import { toast } from 'sonner';
 import { Check, X, User } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/currency';
+import { respondToGuarantorRequest } from '@/lib/actions/guarantors';
 
 export default function GuarantorRequestsPage() {
   const supabase = createClient();
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [processing, setProcessing] = useState<string | null>(null);
 
   const fetchRequests = async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData?.user) return;
+    setUserId(userData.user.id);
 
     const { data, error } = await supabase
       .from('loan_guarantors')
@@ -41,21 +45,16 @@ export default function GuarantorRequestsPage() {
   }, [supabase]);
 
   const handleResponse = async (id: string, status: 'accepted' | 'declined') => {
+    if (!userId) return;
+    setProcessing(id);
     try {
-      const { error } = await supabase
-        .from('loan_guarantors')
-        .update({ 
-          status, 
-          responded_at: new Date().toISOString() 
-        })
-        .eq('id', id);
-
-      if (error) throw error;
-      
+      await respondToGuarantorRequest(id, userId, status);
       toast.success(`Request ${status} successfully`);
       fetchRequests();
     } catch (error: any) {
       toast.error(error.message || 'Failed to update request');
+    } finally {
+      setProcessing(null);
     }
   };
 
@@ -115,10 +114,10 @@ export default function GuarantorRequestsPage() {
         if (row.original.status !== 'pending') return null;
         return (
           <div className="flex justify-end gap-2">
-            <Button size="sm" variant="ghost" onClick={() => handleResponse(row.original.id, 'declined')} className="text-danger">
+            <Button size="sm" variant="ghost" onClick={() => handleResponse(row.original.id, 'declined')} className="text-danger" loading={processing === row.original.id}>
               <X className="h-4 w-4 mr-1" /> Decline
             </Button>
-            <Button size="sm" onClick={() => handleResponse(row.original.id, 'accepted')}>
+            <Button size="sm" onClick={() => handleResponse(row.original.id, 'accepted')} loading={processing === row.original.id}>
               <Check className="h-4 w-4 mr-1" /> Accept
             </Button>
           </div>
