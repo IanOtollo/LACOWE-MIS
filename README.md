@@ -258,4 +258,4 @@ Unauthorized distribution or reproduction is not permitted.
 
 ---
 
-*Built with ❤️ for LACOWE Welfare Group.*
+*Built by IanOtollo for LACOWE Welfare Group.*
