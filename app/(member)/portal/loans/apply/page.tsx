@@ -43,7 +43,16 @@ export default function ApplyLoanPage() {
       const { data: p } = await supabase.from('loan_products').select('*').eq('is_active', true);
       setProducts(p || []);
 
-      const { data: m } = await supabase.from('profiles').select('id, full_name, member_number').neq('id', user?.id);
+      const { data: m } = await supabase
+        .from('profiles')
+        .select(`
+          id, 
+          full_name, 
+          member_number,
+          roles!inner(name)
+        `)
+        .neq('id', user?.id)
+        .neq('roles.name', 'admin');
       setMembers(m || []);
     }
     fetchData();
