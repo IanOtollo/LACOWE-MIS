@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const role = roleName === 'committee' ? 'committee' : 'admin'
 
   const memberNumber = profile.member_number
-  const userName = profile.full_name || profile.first_name
+  const userName = profile.full_name || profile.first_name || 'Admin'
 
   return (
     <AdminClientLayout 

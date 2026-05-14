@@ -29,7 +29,7 @@ export default function AccountDetailsPage() {
             member:profiles!member_id(first_name, last_name, member_number)
           `)
           .eq('id', id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         setAccount(data);

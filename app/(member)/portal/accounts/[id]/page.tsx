@@ -28,7 +28,7 @@ export default function AccountDetailPage() {
         .from('accounts')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
       
       if (acc) {
         setAccount(acc);

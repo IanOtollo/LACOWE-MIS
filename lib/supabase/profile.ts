@@ -30,7 +30,12 @@ export async function getSessionProfile() {
   if (error) return { session, profile: null }
 
   if (profile?.role_id) {
-    const { data: roleData } = await supabase.from('roles').select('name').eq('id', profile.role_id).single()
+    const { data: roleData, error: roleError } = await supabase
+      .from('roles')
+      .select('name')
+      .eq('id', profile.role_id)
+      .maybeSingle()
+    
     if (roleData) {
       (profile as any).roles = roleData
     }

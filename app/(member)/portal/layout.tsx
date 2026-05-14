@@ -14,7 +14,7 @@ export default async function MemberLayout({ children }: { children: ReactNode }
   const role = roleName === 'member' ? 'member' : 'member'
 
   const memberNumber = profile.member_number
-  const userName = profile.full_name || profile.first_name
+  const userName = profile.full_name || profile.first_name || 'Member'
 
   return (
     <div className="min-h-screen">

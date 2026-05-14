@@ -26,7 +26,7 @@ export default function MemberDetailsPage() {
           .from('profiles')
           .select('*')
           .eq('id', id)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         setMember(data);

@@ -32,7 +32,7 @@ export default function ApplicationReviewPage() {
           guarantors:loan_guarantors(id, amount_guaranteed, status, guarantor:profiles!guarantor_member_id(full_name, member_number))
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
       if (data) setApp(data);
       setLoading(false);
     };

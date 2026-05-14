@@ -69,7 +69,7 @@ export function MemberSidebar({
       <div className="p-4 border-t border-border">
         <div className="flex items-center gap-3 px-2">
           <div className="h-9 w-9 rounded-full bg-accent flex items-center justify-center text-white text-sm font-bold">
-            {userName.trim().charAt(0).toUpperCase()}
+            {(userName || 'User').trim().charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-sm font-bold text-text-primary truncate">{userName}</div>
