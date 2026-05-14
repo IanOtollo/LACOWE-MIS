@@ -138,7 +138,7 @@ export default function MemberAccountsPage() {
           <p className="text-muted-foreground">Manage your savings, shares, and other financial accounts.</p>
         </div>
         <div className="flex gap-2">
-           <Button size="sm" variant="outline" onClick={() => setIsTransactOpen(true)}>
+           <Button size="sm" variant="secondary" onClick={() => setIsTransactOpen(true)}>
              <Plus className="h-4 w-4 mr-1" /> Deposit / Withdraw
            </Button>
            <Button size="sm" variant="secondary" onClick={() => handleAddAccount('fixed_deposit')} loading={isAdding}>
