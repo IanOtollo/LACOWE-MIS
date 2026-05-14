@@ -48,9 +48,15 @@ export async function seedLoanProducts() {
     }
   ]
 
-  const { error } = await supabase.from('loan_products').upsert(products, { onConflict: 'name' })
-
-  if (error) throw error
+  // Manual check to avoid duplicate-related crashes if the database constraint is missing
+  for (const p of products) {
+    const { data: existing } = await supabase.from('loan_products').select('id').eq('name', p.name).maybeSingle()
+    if (existing) {
+      await supabase.from('loan_products').update(p).eq('id', existing.id)
+    } else {
+      await supabase.from('loan_products').insert(p)
+    }
+  }
 
   await logAudit({ action: 'SEED_LOAN_PRODUCTS', module: 'System', tableName: 'loan_products', recordId: 'seed', newData: { products: products.length } })
 
