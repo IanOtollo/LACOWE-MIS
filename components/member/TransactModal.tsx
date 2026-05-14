@@ -25,9 +25,10 @@ interface TransactModalProps {
   onClose: () => void;
   accounts: any[];
   memberId: string;
+  onSuccess?: () => void;
 }
 
-export function TransactModal({ open, onClose, accounts, memberId }: TransactModalProps) {
+export function TransactModal({ open, onClose, accounts, memberId, onSuccess }: TransactModalProps) {
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<TransactValues>({
@@ -52,6 +53,7 @@ export function TransactModal({ open, onClose, accounts, memberId }: TransactMod
       });
       toast.success(`${data.type.charAt(0).toUpperCase() + data.type.slice(1)} successful!`);
       reset();
+      onSuccess?.();
       onClose();
     } catch (error: any) {
       toast.error(error.message);

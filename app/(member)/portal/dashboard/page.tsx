@@ -43,6 +43,7 @@ export default function MemberDashboardPage() {
   const [notifications, setNotifications] = useState<NotificationRow[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [isTransactOpen, setIsTransactOpen] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     let mounted = true
@@ -131,7 +132,7 @@ export default function MemberDashboardPage() {
     return () => {
       mounted = false
     }
-  }, [supabase])
+  }, [supabase, refreshKey])
 
   const greeting = profile ? `Good ${greetingByTime()}, ${profile.last_name || profile.first_name || 'Member'}.` : ''
 
@@ -357,6 +358,7 @@ export default function MemberDashboardPage() {
           onClose={() => setIsTransactOpen(false)}
           accounts={accounts}
           memberId={profile.id}
+          onSuccess={() => setRefreshKey((prev) => prev + 1)}
         />
       )}
     </div>

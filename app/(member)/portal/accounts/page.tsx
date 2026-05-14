@@ -182,10 +182,8 @@ export default function MemberAccountsPage() {
       {userId && (
         <TransactModal
           open={isTransactOpen}
-          onClose={() => {
-            setIsTransactOpen(false);
-            fetchAccounts();
-          }}
+          onClose={() => setIsTransactOpen(false)}
+          onSuccess={fetchAccounts}
           accounts={accounts}
           memberId={userId}
         />
