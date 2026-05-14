@@ -178,6 +178,18 @@ export default function MemberAccountsPage() {
           <Table columns={columns} data={accounts} empty="You don't have any accounts yet." />
         )}
       </Card>
+
+      {userId && (
+        <TransactModal
+          open={isTransactOpen}
+          onClose={() => {
+            setIsTransactOpen(false);
+            fetchAccounts();
+          }}
+          accounts={accounts}
+          memberId={userId}
+        />
+      )}
     </div>
   );
 }

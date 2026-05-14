@@ -123,6 +123,57 @@ export async function approveLoanApplication(applicationId: string, approvedBy: 
     .update({ status: 'approved', approved_by: approvedBy, approved_at: new Date().toISOString() })
     .eq('id', applicationId)
 
+  // Notify the member
+  const { data: app } = await supabase
+    .from('loan_applications')
+    .select('member_id, amount_requested, application_number')
+    .eq('id', applicationId)
+    .maybeSingle()
+
+  if (app) {
+    await supabase.from('notifications').insert({
+      user_id: app.member_id,
+      title: '✅ Loan Application Approved',
+      message: `Your loan application (${app.application_number}) for KES ${Number(app.amount_requested).toLocaleString()} has been approved. It will be disbursed to your account shortly.`,
+      type: 'loan',
+      action_url: '/portal/loans',
+    })
+  }
+
+  await supabase
+    .from('loan_applications')
+    .update({ status: 'approved', approved_by: approvedBy, approved_at: new Date().toISOString() })
+    .eq('id', applicationId)
+
+  return { success: true }
+}
+
+export async function rejectLoanApplication(applicationId: string, rejectedBy: string, reason?: string) {
+  const supabase = createClient(true)
+
+  const { data: app } = await supabase
+    .from('loan_applications')
+    .select('member_id, amount_requested, application_number')
+    .eq('id', applicationId)
+    .maybeSingle()
+
+  await supabase
+    .from('loan_applications')
+    .update({ status: 'rejected', reviewed_by: rejectedBy, reviewed_at: new Date().toISOString(), rejection_reason: reason || 'Application did not meet requirements.' })
+    .eq('id', applicationId)
+
+  if (app) {
+    await supabase.from('notifications').insert({
+      user_id: app.member_id,
+      title: '❌ Loan Application Rejected',
+      message: `Your loan application (${app.application_number}) for KES ${Number(app.amount_requested).toLocaleString()} was not approved. Reason: ${reason || 'Application did not meet requirements.'}`,
+      type: 'loan',
+      action_url: '/portal/loans',
+    })
+  }
+
+  await logAudit({ action: 'REJECT_LOAN_APPLICATION', module: 'Loans', tableName: 'loan_applications', recordId: applicationId, newData: { reason } })
+
   return { success: true }
 }
 

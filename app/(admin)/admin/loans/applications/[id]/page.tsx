@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeftIcon, CheckIcon, XIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { approveLoanApplication } from '@/lib/actions/loans';
+import { approveLoanApplication, rejectLoanApplication } from '@/lib/actions/loans';
 
 export default function ApplicationReviewPage() {
   const router = useRouter();
@@ -46,6 +46,23 @@ export default function ApplicationReviewPage() {
       const { data: { user } } = await supabase.auth.getUser();
       await approveLoanApplication(app.id, user?.id || '');
       toast.success('Application approved!');
+      router.push('/admin/loans');
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!app) return;
+    const reason = window.prompt('Enter rejection reason (optional):');
+    if (reason === null) return; // cancelled
+    setIsProcessing(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await rejectLoanApplication(app.id, user?.id || '', reason || undefined);
+      toast.success('Application rejected.');
       router.push('/admin/loans');
     } catch (err: any) {
       toast.error(err.message);
@@ -157,6 +174,8 @@ export default function ApplicationReviewPage() {
               <Button 
                 variant="danger" 
                 className="w-full"
+                onClick={handleReject}
+                loading={isProcessing}
                 disabled={app.status !== 'pending' && app.status !== 'under_review'}
               >
                 <XIcon className="w-4 h-4 mr-2" />
