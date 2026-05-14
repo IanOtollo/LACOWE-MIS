@@ -18,7 +18,8 @@ export async function seedLoanProducts() {
       requires_guarantor: true,
       min_guarantors: 1,
       max_guarantors: 1,
-      processing_fee_percent: 1.00
+      processing_fee_percent: 1.00,
+      is_active: true
     },
     {
       name: 'Development Loan',
@@ -31,7 +32,8 @@ export async function seedLoanProducts() {
       requires_guarantor: true,
       min_guarantors: 2,
       max_guarantors: 4,
-      processing_fee_percent: 1.50
+      processing_fee_percent: 1.50,
+      is_active: true
     },
     {
       name: 'Education Loan',
@@ -44,7 +46,8 @@ export async function seedLoanProducts() {
       requires_guarantor: true,
       min_guarantors: 1,
       max_guarantors: 2,
-      processing_fee_percent: 1.00
+      processing_fee_percent: 1.00,
+      is_active: true
     }
   ]
 

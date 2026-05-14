@@ -174,6 +174,11 @@ export default function ApplyLoanPage() {
                             <option key={m.id} value={m.id}>{m.full_name} ({m.member_number})</option>
                           ))}
                         </select>
+                        {members.length === 0 && (
+                          <p className="text-xs text-warning font-medium">
+                            No other members found to act as guarantors. Please contact Admin.
+                          </p>
+                        )}
                         {errors.guarantors?.[index]?.memberId && <p className="text-xs text-danger">{errors.guarantors[index]?.memberId?.message}</p>}
                       </div>
                       <div className="w-32 space-y-1">
