@@ -10,6 +10,7 @@ import { Plus, Wallet, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils/currency';
+import { TransactModal } from '@/components/member/TransactModal';
 
 export default function MemberAccountsPage() {
   const supabase = createClient();
@@ -17,6 +18,8 @@ export default function MemberAccountsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [isTransactOpen, setIsTransactOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   
   const fetchAccounts = async () => {
     try {
@@ -31,6 +34,7 @@ export default function MemberAccountsPage() {
 
       if (error) throw error;
       setAccounts(data || []);
+      setUserId(userData.user.id);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -134,6 +138,9 @@ export default function MemberAccountsPage() {
           <p className="text-muted-foreground">Manage your savings, shares, and other financial accounts.</p>
         </div>
         <div className="flex gap-2">
+           <Button size="sm" variant="outline" onClick={() => setIsTransactOpen(true)}>
+             <Plus className="h-4 w-4 mr-1" /> Deposit / Withdraw
+           </Button>
            <Button size="sm" variant="secondary" onClick={() => handleAddAccount('fixed_deposit')} loading={isAdding}>
              <Plus className="h-4 w-4 mr-1" /> New Fixed Deposit
            </Button>

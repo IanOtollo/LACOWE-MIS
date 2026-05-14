@@ -19,3 +19,6 @@ export const generateReceiptNumber = (): string => {
   return `RCPT-${dateStr}-${random}`
 }
 
+export const generateTransactionReference = (prefix: string): string => {
+  return generateReference(prefix)
+}

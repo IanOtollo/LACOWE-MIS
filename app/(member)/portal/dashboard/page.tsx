@@ -11,8 +11,11 @@ import { StatCard } from '@/components/ui/StatCard'
 import { Badge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import { Spinner } from '@/components/ui/Spinner'
-import type { ColumnDef } from '@tanstack/react-table'
+import { Button } from '@/components/ui/Button'
+import { PlusIcon } from 'lucide-react'
 import { calculateLoan } from '@/lib/utils/loan-calculator'
+import { TransactModal } from '@/components/member/TransactModal'
+import type { ColumnDef } from '@tanstack/react-table'
 
 type AccountRow = { id: string; account_type: string; account_number: string; account_name: string; balance: number; status: string; opened_at: string }
 type TxRow = { id: string; created_at: string; transaction_type: string; description?: string | null; amount: number; balance_after: number; reference_number: string; payment_method?: string | null }
@@ -39,6 +42,7 @@ export default function MemberDashboardPage() {
   const [announcements, setAnnouncements] = useState<AnnouncementRow[]>([])
   const [notifications, setNotifications] = useState<NotificationRow[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const [isTransactOpen, setIsTransactOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -131,7 +135,7 @@ export default function MemberDashboardPage() {
 
   const greeting = profile ? `Good ${greetingByTime()}, ${profile.last_name || profile.first_name || 'Member'}.` : ''
 
-  const txColumns = useMemo<ColumnDef<TxRow, unknown>[]>(
+  const txColumns = useMemo<ColumnDef<TxRow, any>[]>(
     () => [
       {
         accessorKey: 'created_at',
@@ -189,8 +193,27 @@ export default function MemberDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-lg font-bold text-text-primary">Member Dashboard</h1>
-      {greeting ? <div className="text-sm text-text-secondary">{greeting}</div> : null}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-text-primary">Member Dashboard</h1>
+          {greeting ? <div className="text-sm text-text-secondary mt-1">{greeting}</div> : null}
+        </div>
+        
+        <div className="flex gap-2">
+          <Button 
+            onClick={() => setIsTransactOpen(true)}
+            className="bg-success hover:bg-success/90 shadow-lg"
+          >
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Deposit / Withdraw
+          </Button>
+          <Link href="/portal/loans/apply">
+            <Button variant="secondary">
+              Apply for Loan
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       {loading ? (
         <div className="flex items-center gap-3 text-text-secondary">
@@ -327,7 +350,15 @@ export default function MemberDashboardPage() {
           </div>
         </>
       ) : null}
+
+      {profile && (
+        <TransactModal 
+          open={isTransactOpen}
+          onClose={() => setIsTransactOpen(false)}
+          accounts={accounts}
+          memberId={profile.id}
+        />
+      )}
     </div>
   )
 }
-
